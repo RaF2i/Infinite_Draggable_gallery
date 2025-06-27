@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+}
+
+body {
+    font-family: 'Inter';   
+    background-color: #ff0000;
+    overflow: hidden;
+}
+
+nav{
+    position: fixed;
+    font-family: "Poppins";
+    color: aqua;
+    font-size: 4.5vh;
+    font-weight: 900;
+    inset: 0;
+    height: 5vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    mix-blend-mode: difference;
+    /* background-color: aqua; */
+    overflow: hidden;
+}
+
+/* .bar {
+    width: 50%;
+    height: 100%;
+    background-color: aqua;
+    mix-blend-mode: difference;
+    z-index: 100;
+    position: absolute;
+    
+} */
+
+
+
+a,p {
+    display: block;
+    text-decoration: none;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.01rem;
+    -webkit-font-smoothing: antialiased; ;
+}
+
+.container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    cursor: grab;
+}
+
+.canvas {
+    position: absolute;
+    will-change: transform;
+}
+
+.item {
+    position: absolute;
+    width: 120px;
+    height: 160px;
+    overflow: hidden;
+    background-color: #000;
+    cursor: pointer;
+}
+
+.expanded-item {
+    position: fixed;
+    z-index: 100;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ff0000;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+}
+
+.overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #ff0000;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    opacity: 0;
+    z-index: 2;
+}
+
+.overlay.active { 
+    pointer-events: auto; 
+    opacity: 1;
+}
+
+.project-title{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    text-align: center;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.project-title p word {
+    position: relative;
+    display: inline-block;
+    font-family: 'Inter';
+    font-size: 36px;
+    letter-spacing: -0.02rem;
+    margin-right: 0.1em;
+    transform: translateY(0%);
+    will-change: transform;
+}
