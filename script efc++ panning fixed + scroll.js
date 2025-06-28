@@ -932,8 +932,6 @@ window.addEventListener("touchend", () => {
   }
 });
 
-
-
 // Event listener for window resize.
 window.addEventListener("resize", () => {
   if (isExpanded && expandedItem && window.gsap) {
