@@ -92,7 +92,7 @@ function createItemElement(col, row, itemId, isInitial = false) {
 
   const itemNum = (Math.abs(row * columns + col) % itemCount) + 1;
   const img = document.createElement("img");
-  img.dataset.src = `public/${itemNum}.jpeg`;
+  img.dataset.src = `public/${itemNum}.jpg`;
   img.alt = `Image ${itemNum}`;
   img.className = 'lazy-image';
   item.appendChild(img);
@@ -450,7 +450,7 @@ function expandItem(item) {
   panAnimation && (panAnimation.kill(), panActive = false);
 
   const imgSrc = item.querySelector("img").src || item.querySelector("img").dataset.src;
-  const imgMatch = imgSrc.match(/\/(\d+)\.jpeg/);
+  const imgMatch = imgSrc.match(/\/(\d+)\.jpg/);
   const imgNum = imgMatch ? parseInt(imgMatch[1]) : 1;
 
   setAndAnimateTitle(items[(imgNum - 1) % items.length]);
