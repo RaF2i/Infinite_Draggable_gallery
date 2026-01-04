@@ -12,7 +12,7 @@ const projectTitleElem = document.querySelector(".project-title p");
 const nav = document.querySelector('nav');
 
 const itemCount = 20, itemGap = 150, columns = 4, itemWidth = 120, itemHeight = 160;
-const panStrength = 0.4, panRange = 250;
+const panStrength = 0.4, panRange = 250, scrollSpeed = 0.8;
 
 let isDragging = false, startX, startY, targetX = 0, targetY = 0, currentX = 0, currentY = 0;
 let dragVelocityX = 0, dragVelocityY = 0, lastDragTime = 0, mouseHasMoved = false;
@@ -22,7 +22,7 @@ let expandedItem = null, activeItemId = null, titleSplit = null, isAnimatingTitl
 let hoveredItem = null, initialAnimationDone = false, initialVisibleItems = new Set();
 let panTargetX = 0, panTargetY = 0, panCurrentX = 0, panCurrentY = 0, panActive = false, panAnimation = null;
 let frozenPanX = 0, frozenPanY = 0, isPanningFrozen = false, waitingForMouseMove = false;
-let lastMouseX = 0, lastMouseY = 0;
+let lastMouseX = 0, lastMouseY = 0, scrollOffsetX = 0, scrollOffsetY = 0;
 
 /**
  * Initializes the navigation bar animation by checking if GSAP is loaded
@@ -550,6 +550,19 @@ function closeExpandedItem() {
 }
 
 /**
+ * Handles mouse wheel scrolling to move the canvas
+ * @param {WheelEvent} e - The wheel event
+ */
+function handleScroll(e) {
+  if (!canDrag || isExpanded) return;
+  e.preventDefault();
+  scrollOffsetX -= e.deltaX * scrollSpeed;
+  scrollOffsetY -= e.deltaY * scrollSpeed;
+  targetX = scrollOffsetX;
+  targetY = scrollOffsetY;
+}
+
+/**
  * Main animation loop that updates the canvas position with smooth easing
  * and triggers updates to visible items when needed
  */
@@ -583,6 +596,7 @@ createInitialItems();
 animate();
 
 window.addEventListener("mousemove", handleMousePan);
+window.addEventListener("wheel", handleScroll, { passive: false });
 
 container.addEventListener("mousedown", e => {
   if (!canDrag) return;
