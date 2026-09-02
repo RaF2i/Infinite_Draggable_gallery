@@ -554,7 +554,7 @@ function closeExpandedItem() {
  * @param {WheelEvent} e - The wheel event
  */
 function handleScroll(e) {
-  if (!canDrag || isExpanded) return;
+  if (!canDrag || isExpanded || document.body.classList.contains("grid-mode")) return;
   e.preventDefault();
   scrollOffsetX -= e.deltaX * scrollSpeed;
   scrollOffsetY -= e.deltaY * scrollSpeed;
@@ -590,6 +590,121 @@ function animate() {
   }
   requestAnimationFrame(animate);
 }
+
+function buildBlurFade() {
+  const blurFade = document.querySelector(".blur-fade");
+  if (!blurFade) return;
+
+  const divCount = 8;
+  const strength = 2.5;
+  const opacity = 1;
+  const increment = 100 / divCount;
+  const direction = "to bottom";
+  const curve = p => p * p * (3 - 2 * p);
+
+  for (let i = 1; i <= divCount; i++) {
+    const progress = curve(i / divCount);
+    const blur = Math.pow(2, progress * 4) * strength;
+
+    const p1 = increment * i - increment;
+    const p2 = increment * i;
+    const p3 = increment * i + increment;
+    const p4 = increment * i + increment * 2;
+
+    let gradient = `transparent ${p1}%, black ${p2}%`;
+    if (p3 <= 100) gradient += `, black ${p3}%`;
+    if (p4 <= 100) gradient += `, transparent ${p4}%`;
+
+    const div = document.createElement("div");
+    div.style.maskImage = `linear-gradient(${direction}, ${gradient})`;
+    div.style.WebkitMaskImage = `linear-gradient(${direction}, ${gradient})`;
+    div.style.backdropFilter = `blur(${blur.toFixed(2)}px)`;
+    div.style.WebkitBackdropFilter = `blur(${blur.toFixed(2)}px)`;
+    div.style.opacity = opacity;
+    blurFade.appendChild(div);
+  }
+}
+
+buildBlurFade();
+
+const btnCanvas = document.getElementById("btn-canvas");
+const btnGrid = document.getElementById("btn-grid");
+const gridView = document.querySelector(".grid-view");
+const gridLineL = document.querySelector(".grid-line-left");
+const gridLineR = document.querySelector(".grid-line-right");
+
+function positionGridLines() {
+  const padX = window.innerWidth * 0.05, gap = 14;
+  const width = window.innerWidth - padX * 2;
+  const col = (width - gap * 2) / 3;
+  gridLineL.style.left = `${padX + col + gap / 2 - 2.5}px`;
+  gridLineR.style.left = `${padX + col * 2 + gap * 1.5 - 2.5}px`;
+}
+
+function createGridView() {
+  if (gridView.children.length) return;
+  for (let n = 1; n <= 20; n++) {
+    const img = document.createElement("img");
+    img.src = `public/${n}.jpg`;
+    img.alt = `Image ${n}`;
+    gridView.appendChild(img);
+  }
+}
+
+function setActiveButton(active) {
+  btnCanvas.classList.toggle("active", active === "canvas");
+  btnGrid.classList.toggle("active", active === "grid");
+}
+
+function showGrid() {
+  if (document.body.classList.contains("grid-mode")) return;
+  createGridView();
+  const gridItems = Array.from(gridView.children);
+  const lineHeight = window.innerHeight;
+
+  gsap.set(gridItems, { opacity: 0 });
+
+  gsap.to(container, {
+    opacity: 0, scale: 0.96, duration: 0.4, ease: "power2.inOut",
+    onComplete: () => {
+      gsap.set(container, { opacity: 1, scale: 1 });
+      document.body.classList.add("grid-mode");
+      gridView.scrollTop = 0;
+      positionGridLines();
+
+      gsap.fromTo([gridLineL, gridLineR],
+        { height: 0 },
+        { height: lineHeight, duration: 0.6, ease: "power2.inOut",
+          onComplete: () => {
+            gsap.to(gridItems, {
+              opacity: 1, duration: 0.5, stagger: 0.03, ease: "power3.out"
+            });
+          }
+        }
+      );
+    }
+  });
+  setActiveButton("grid");
+}
+
+function showCanvas() {
+  if (!document.body.classList.contains("grid-mode")) return;
+  gsap.to(gridView.children, {
+    opacity: 0, y: 40, scale: 0.94, filter: "blur(6px)",
+    duration: 0.3, stagger: 0.008, ease: "power2.in",
+    onComplete: () => {
+      document.body.classList.remove("grid-mode");
+      gsap.fromTo(container,
+        { opacity: 0, scale: 0.96 },
+        { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" }
+      );
+    }
+  });
+  setActiveButton("canvas");
+}
+
+btnGrid.addEventListener("click", showGrid);
+btnCanvas.addEventListener("click", showCanvas);
 
 initNavAnimation();
 createInitialItems();
@@ -656,6 +771,10 @@ window.addEventListener("touchmove", e => {
 window.addEventListener("touchend", () => isDragging && (isDragging = false));
 
 window.addEventListener("resize", () => {
+  if (document.body.classList.contains("grid-mode")) {
+    positionGridLines();
+    gsap.set([gridLineL, gridLineR], { height: window.innerHeight });
+  }
   if (isExpanded && expandedItem && window.gsap) {
     const targetHeight = window.innerHeight * 0.7;
     gsap.to(expandedItem, {

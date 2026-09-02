@@ -9,8 +9,111 @@
 
 body {
     font-family: 'Inter';   
-    background-color: #ff0000;
+    background-color: #5c0f0f;
     overflow: hidden;
+}
+
+.blur-fade {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 24vh;
+    pointer-events: none;
+    z-index: 900;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.blur-fade > div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+    .blur-fade > div {
+        background: rgba(0, 0, 0, 0.3);
+        opacity: 0.5;
+    }
+}
+
+.view-toggle {
+    position: fixed;
+    bottom: 3.5vh;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 950;
+}
+
+.view-toggle button {
+    font-family: 'Inter';
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 8px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.view-toggle button:hover,
+.view-toggle button.active {
+    background: rgba(255, 255, 255, 0.9);
+    color: #000;
+}
+
+.grid-view {
+    position: fixed;
+    inset: 0;
+    display: none;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    padding: 60px 5vw 40px;
+    overflow-y: auto;
+    z-index: 800;
+    background: #200000;
+}
+
+body.grid-mode .grid-view {
+    display: grid;
+}
+
+body.grid-mode .container {
+    display: none;
+}
+
+.grid-view img {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border-radius: 8px;
+    display: block;
+    will-change: transform, opacity;
+}
+
+.grid-line {
+    position: fixed;
+    width: 5px;
+    height: 0;
+    top: 0;
+    background: #ffd700;
+    border-radius: 3px;
+    z-index: 920;
+    box-shadow: 0 0 14px rgba(255, 215, 0, 0.5);
+    pointer-events: none;
+    display: none;
+}
+
+body.grid-mode .grid-line {
+    display: block;
 }
 
 nav{
@@ -76,7 +179,7 @@ a,p {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: #ff0000;
+    background-color: #4a0a0a;
     overflow: hidden;
     cursor: pointer;
 }
@@ -99,7 +202,7 @@ img {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #ff0000;
+    background-color: #4a0a0a;
     pointer-events: none;
     transition: opacity 0.3s ease;
     opacity: 0;

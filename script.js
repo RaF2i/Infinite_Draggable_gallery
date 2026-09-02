@@ -578,6 +578,42 @@ function animate() {
   requestAnimationFrame(animate);
 }
 
+function buildBlurFade() {
+  const blurFade = document.querySelector(".blur-fade");
+  if (!blurFade) return;
+
+  const divCount = 8;
+  const strength = 2.5;
+  const opacity = 1;
+  const increment = 100 / divCount;
+  const direction = "to bottom";
+  const curve = p => p * p * (3 - 2 * p);
+
+  for (let i = 1; i <= divCount; i++) {
+    const progress = curve(i / divCount);
+    const blur = Math.pow(2, progress * 4) * strength;
+
+    const p1 = increment * i - increment;
+    const p2 = increment * i;
+    const p3 = increment * i + increment;
+    const p4 = increment * i + increment * 2;
+
+    let gradient = `transparent ${p1}%, black ${p2}%`;
+    if (p3 <= 100) gradient += `, black ${p3}%`;
+    if (p4 <= 100) gradient += `, transparent ${p4}%`;
+
+    const div = document.createElement("div");
+    div.style.maskImage = `linear-gradient(${direction}, ${gradient})`;
+    div.style.WebkitMaskImage = `linear-gradient(${direction}, ${gradient})`;
+    div.style.backdropFilter = `blur(${blur.toFixed(2)}px)`;
+    div.style.WebkitBackdropFilter = `blur(${blur.toFixed(2)}px)`;
+    div.style.opacity = opacity;
+    blurFade.appendChild(div);
+  }
+}
+
+buildBlurFade();
+
 initNavAnimation();
 createInitialItems();
 animate();
