@@ -4,6 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" />
+    <style>
+      /* drag removed: normal cursor over the gallery */
+      .container {
+        cursor: default !important;
+      }
+    </style>
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <title>Gallery ∞</title>
   </head>
@@ -62,5 +68,22 @@
     <script src="https://unpkg.com/split-type"></script>
     <script src="https://unpkg.com/lenis@1.3.4/dist/lenis.min.js"></script>
     <script src="scriptv2.js"></script>
+    <script>
+      // Infinite drag removed — the canvas moves by wheel scroll only.
+      // Swallow mousedown/touchstart in the capture phase so they never
+      // reach the drag handlers in scriptv2.js; wheel scroll and item
+      // clicks are unaffected.
+      ["mousedown", "touchstart"].forEach(function (evt) {
+        window.addEventListener(
+          evt,
+          function (e) {
+            if (e.target && e.target.closest && e.target.closest(".container")) {
+              e.stopPropagation();
+            }
+          },
+          { capture: true, passive: true }
+        );
+      });
+    </script>
   </body>
 </html>
